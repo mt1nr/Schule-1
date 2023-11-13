@@ -1,0 +1,33 @@
+#include "mbed.h"
+#include "LCD.h"
+#define sleep ThisThread::sleep_for
+const char anzeigeTabelle[]= {0x3F, 0x30, 0x5B, 0b01111001, 0x74, 0x6D, 0b01101111};
+lcd mylcd;
+int main() {
+    DigitalIn sensor(PB_0);
+    sensor.mode(PullDown);
+    PortOut anzeige(PortC,0xFF);
+    DigitalOut einerstelle(PC_11);
+
+    int i=1;
+    int x=1;
+    mylcd.clear(); 
+
+    while(true) {
+      einerstelle=1;
+      while(sensor) {
+        i++;
+        if(i > 6) {
+            i = 1;
+        }
+      } if(!sensor) {
+            anzeige = anzeigeTabelle[x];
+            mylcd.cursorpos(0);
+            mylcd.printf("Zahl: %i",i); 
+            sleep(500);
+      } if (sensor) {
+            x=i;
+      }
+        
+    }
+}
